@@ -1,1 +1,4 @@
 virtual_env
+stabilized_videos
+extracted_frames
+utils/__pycache__/

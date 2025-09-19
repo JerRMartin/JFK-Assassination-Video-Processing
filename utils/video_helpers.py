@@ -6,7 +6,7 @@ def extract_frames(video_path, output_folder, start_time, end_time):
     os.makedirs(output_folder, exist_ok=True)
 
     # Open video
-    video = cv2.VideoCapture(os.path.join("videos", video_path))
+    video = cv2.VideoCapture(video_path)
     fps = video.get(cv2.CAP_PROP_FPS)  # frames per second
     total_frames = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
 
