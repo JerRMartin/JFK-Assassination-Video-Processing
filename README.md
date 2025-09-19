@@ -25,3 +25,8 @@ source virtual_env/bin/activate
 ```
 pip install opencv-python
 ```
+
+4. To run the program
+```
+python3 main.py
+```
