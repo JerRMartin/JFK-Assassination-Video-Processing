@@ -22,9 +22,9 @@ for frame in os.listdir("extracted_frames/couch_film/original"):
     #                 f"extracted_frames/couch_film/original/{frame}", 
     #                 f"extracted_frames/couch_film/high_pass/{frame}")
 
-    # Histogram equalize each frame
-    hist_eq_frame(f"extracted_frames/couch_film/original/{frame}", #TODO: change this to the output of high-pass filter
-                  f"extracted_frames/couch_film/equalized/{frame}")
+    # # Histogram equalize each frame
+    # hist_eq_frame(f"extracted_frames/couch_film/original/{frame}", #TODO: change this to the output of high-pass filter
+    #               f"extracted_frames/couch_film/equalized/{frame}")
 
 #TODO: Recombine the frames into a video to pass to the stabilizer
 
