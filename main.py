@@ -25,11 +25,8 @@ for frame in os.listdir("extracted_frames/couch_film/original"):
     # Histogram equalize each frame
     hist_eq_frame(f"extracted_frames/couch_film/original/{frame}", #TODO: change this to the output of high-pass filter
                   f"extracted_frames/couch_film/equalized/{frame}")
-    
-
 
 #TODO: Recombine the frames into a video to pass to the stabilizer
-
 
 # # Stabilize video
 # stabilizer = VidStab()
@@ -38,3 +35,6 @@ for frame in os.listdir("extracted_frames/couch_film/original"):
 #     input_path=f"{videos_input_folder}/Couch film of John F. Kennedy assassination.mp4", 
 #     output_path=f"{stable_output_folder}/Couch film Stablized.avi"
 #     )
+
+
+#TODO: Gather Quantitative Metrics on the video quality before and after all the Image processing
