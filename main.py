@@ -2,6 +2,7 @@ import os
 from utils.video_helpers import extract_frames
 from utils.frame_helpers import hist_eq_frame, high_pass_frame
 from vidstab import VidStab
+import sewar
 
 stable_output_folder = "stabilized_videos"
 videos_input_folder = "videos"
