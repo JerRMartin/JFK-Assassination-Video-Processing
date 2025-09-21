@@ -21,14 +21,9 @@ source virtual_env/bin/activate
 > Note: You should now see your working directory prefixed by `(virtual_env)`
 
 
-3. Install the `opencv` library using pip
+3. Install the requirements using pip
 ```
-pip install opencv-python
-```
-
-4. Install the `sewar` library for metrics
-```
-pip install sewar
+pip install -r requirements.txt
 ```
 
 4. To run the program
