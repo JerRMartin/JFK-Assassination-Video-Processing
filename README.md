@@ -3,7 +3,7 @@
 
 The goal of this project is a study on crowd dynamics. We are looking to enhance relevant portions of the videos to offer insight into how many attendees were in attendance during the assassination of JFK. 
 
-## Setup
+## Setup 
 Ensure Python's package installer (PIP) is installed on your machine. 
 
 Open a terminal in the working directory (This is using a [WSL](https://learn.microsoft.com/en-us/windows/wsl/install) terminal)
