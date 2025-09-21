@@ -1,0 +1,5 @@
+opencv-python==4.12.0.88
+numpy==2.2.6
+scipy==1.16.2
+Pillow==11.3.0
+sewar==0.4.6
