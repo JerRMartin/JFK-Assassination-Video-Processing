@@ -1,41 +1,88 @@
-import os
-from utils.video_helpers import extract_frames
-from utils.frame_helpers import hist_eq_frame, high_pass_frame
-from vidstab import VidStab
-import sewar
+from pathlib import Path
+import re
+import config as C
+from utils.processing import process_clip
+from utils.audio import merge_audio_window
 
-stable_output_folder = "stabilized_videos"
-videos_input_folder = "videos"
+def _to_seconds(tc: str | None) -> float | None:
+    """Parse 'mm:ss' or 'hh:mm:ss' → seconds."""
+    if not tc or not tc.strip():
+        return None
+    tc = tc.strip()
+    parts = [int(p) for p in tc.split(":")]
+    if len(parts) == 2:   # mm:ss
+        mm, ss = parts
+        return mm * 60 + ss
+    if len(parts) == 3:   # hh:mm:ss
+        hh, mm, ss = parts
+        return hh * 3600 + mm * 60 + ss
+    raise ValueError(f"Bad timecode '{tc}'. Use mm:ss or hh:mm:ss")
 
-#TODO: Do this for each video we want to process, keep in mind we have 5, we only need 5
+def _match_file(videos: list[Path], query: str) -> Path | None:
+    """Case-insensitive substring match of 'film' against file stem."""
+    q = re.sub(r"\s+", " ", query.strip().lower())
+    for p in videos:
+        stem = p.stem.lower()
+        if q in stem or stem in q:
+            return p
+    return None
 
-extract_frames(
-    f"{videos_input_folder}/Couch film of John F. Kennedy assassination.mp4", 
-    "extracted_frames/couch_film/original", 
-    10, #TODO: decide our actual start time
-    11 #TODO: Decide our actual end time
-    )
+def discover_videos(folder: Path):
+    return sorted([f for f in folder.glob("*") if f.suffix.lower() in [".mp4", ".avi", ".mov", ".mkv"]])
 
-for frame in os.listdir("extracted_frames/couch_film/original"):
+def main():
+    jobs = C.INSTRUCTIONS
+    if not jobs:
+        print("❌ No hardcoded jobs in config.INSTRUCTIONS")
+        return
 
-    # # Apply High-pass filter
-    # high_pass_frame(24.85,
-    #                 f"extracted_frames/couch_film/original/{frame}", 
-    #                 f"extracted_frames/couch_film/high_pass/{frame}")
+    videos = discover_videos(C.VIDEO_FOLDER)
+    if not videos:
+        print(f"❌ No videos found in '{C.VIDEO_FOLDER}'.")
+        return
 
-    # # Histogram equalize each frame
-    # hist_eq_frame(f"extracted_frames/couch_film/original/{frame}", #TODO: change this to the output of high-pass filter
-    #               f"extracted_frames/couch_film/equalized/{frame}")
+    C.OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-#TODO: Recombine the frames into a video to pass to the stabilizer
+    for job in jobs:
+        film = job["film"]
+        start_s = _to_seconds(job.get("start"))
+        end_s   = _to_seconds(job.get("end"))
+        enh     = [e.lower() for e in job.get("enhancements", [])]
 
-# # Stabilize video
-# stabilizer = VidStab()
-# os.makedirs(stable_output_folder, exist_ok=True)
-# stabilizer.stabilize(
-#     input_path=f"{videos_input_folder}/Couch film of John F. Kennedy assassination.mp4", 
-#     output_path=f"{stable_output_folder}/Couch film Stablized.avi"
-#     )
+        do_stab     = any("stabil" in e for e in enh)
+        do_denoise  = any("denois"  in e for e in enh)
+        do_sharpen  = any("sharpen" in e for e in enh)
 
+        src = _match_file(videos, film)
+        if not src:
+            print(f"⚠️ Could not match film '{film}' to a file in {C.VIDEO_FOLDER}. Skipping.")
+            continue
 
-#TODO: Gather Quantitative Metrics on the video quality before and after all the Image processing
+        tag_parts = []
+        if do_stab: tag_parts.append("stab")
+        if do_denoise: tag_parts.append("denoise")
+        if do_sharpen: tag_parts.append("sharp")
+        tag = "_".join(tag_parts) if tag_parts else "copy"
+
+        s_tag = f"{int((start_s or 0)//60)}m{int((start_s or 0)%60):02d}s"
+        e_tag = "end" if end_s is None else f"{int(end_s//60)}m{int(end_s%60):02d}s"
+
+        out_path = C.OUTPUT_DIR / f"{src.stem}_{s_tag}-{e_tag}_{tag}.mp4"
+        print(f"▶️ {src.name} | {s_tag} → {e_tag} | effects={tag}")
+
+        ok, fps, used_start, used_end = process_clip(
+            src, out_path, start_s or 0.0, end_s, do_stab, do_denoise, do_sharpen
+        )
+
+        if ok and C.MERGE_AUDIO_WITH_FFMPEG:
+            out_audio = C.OUTPUT_DIR / f"{out_path.stem}_aud.mp4"
+            if merge_audio_window(src, out_path, out_audio, used_start, end_s if end_s is not None else used_end):
+                try:
+                    out_audio.replace(out_path)  # overwrite silent with audio version
+                except Exception:
+                    pass
+
+    print("✅ Done. Check the 'processed_videos' folder.")
+
+if __name__ == "__main__":
+    main()
