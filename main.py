@@ -63,7 +63,6 @@ def main():
             C.STABILIZER.stabilize(input_path=str(out_path), 
                                    output_path=str(stab_out_path), 
                                    border_type='black',
-                                   #border_size='100'
                                    border_size=100)
             print(f"✅ Stabilization done. Check the '{C.STABILIZED_DIR}' folder for {stab_out_path.name}.")
 
