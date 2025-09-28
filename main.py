@@ -2,6 +2,8 @@ import config as C
 from utils.processing import process_clip
 from utils.audio import merge_audio_window
 from utils.helpers import to_seconds, match_file, discover_videos
+from utils.metrics import compute_video_metrics
+
 
 def main():
     jobs = C.INSTRUCTIONS
@@ -61,10 +63,27 @@ def main():
             C.STABILIZER.stabilize(input_path=str(out_path), 
                                    output_path=str(stab_out_path), 
                                    border_type='black',
-                                   border_size='100')
+                                   #border_size='100'
+                                   border_size=100)
             print(f"✅ Stabilization done. Check the '{C.STABILIZED_DIR}' folder for {stab_out_path.name}.")
 
+        # Only compute metrics if requested in the job's metrics list
+        metrics_req = [m.lower() for m in job.get("metrics", [])]
+        if any(m in metrics_req for m in ("ssim", "mse")):
+            # Compare stabilized vs the pre-stabilization trimmed clip
+            res = compute_video_metrics(
+                ref_path=str(out_path),
+                test_path=str(stab_out_path),
+                crop_border=20,      # ignore 20px border to avoid black edges
+                max_frames=None      # or set e.g. 300 for speed
+            )
+            print(f"📊 Metrics on stabilized window "
+                  f"(frames={res['frames']}, crop=20px): "
+                  f"SSIM={res['ssim']:.4f}, MSE={res['mse']:.2f}")
+
     print(f"✅ Done. Check the '{C.PROCESSED_DIR}' folder.")
+
+
 
 if __name__ == "__main__":
     main()
