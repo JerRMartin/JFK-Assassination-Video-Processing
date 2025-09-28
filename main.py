@@ -1,9 +1,7 @@
-from pathlib import Path
-import re
 import config as C
 from utils.processing import process_clip
 from utils.audio import merge_audio_window
-from utils.helpers import _to_seconds, _match_file, discover_videos
+from utils.helpers import to_seconds, match_file, discover_videos
 
 def main():
     jobs = C.INSTRUCTIONS
@@ -22,15 +20,15 @@ def main():
 
     for job in jobs:
         film = job["film"]
-        start_s = _to_seconds(job.get("start"))
-        end_s   = _to_seconds(job.get("end"))
+        start_s = to_seconds(job.get("start"))
+        end_s   = to_seconds(job.get("end"))
         enh     = [e.lower() for e in job.get("enhancements", [])]
 
         do_stab     = any("stabil" in e for e in enh)
         do_denoise  = any("denois"  in e for e in enh)
         do_sharpen  = any("sharpen" in e for e in enh)
 
-        src = _match_file(videos, film)
+        src = match_file(videos, film)
         if not src:
             print(f"⚠️ Could not match film '{film}' to a file in {C.VIDEO_FOLDER}. Skipping.")
             continue

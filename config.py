@@ -40,30 +40,35 @@ INSTRUCTIONS = [
         "film": "Hughes film of John F. Kennedy assassination",
         "start": "0:06",
         "end":   "0:27",
-        "enhancements": ["denoise", "sharpen", "stabilize"]
+        "enhancements": ["denoise", "sharpen", "stabilize"], 
+        "metrics": ["psnr", "ssim", "mse", "brisque", "niqe"]
     },
     {
         "film": "Martin film of John F. Kennedy assassination",
         "start": "0:07",
         "end":   "0:12",
-        "enhancements": ["denoise", "sharpen", "stabilize"]
+        "enhancements": ["denoise", "sharpen", "stabilize"], 
+        "metrics": ["psnr", "ssim", "mse", "brisque", "niqe"]
     },
     {
         "film": "JFK Assassination Bell Film",
         "start": "0:35",
         "end":   "0:49",
-        "enhancements": ["sharpen", "stabilize"]
+        "enhancements": ["sharpen", "stabilize"], 
+        "metrics": ["psnr", "ssim", "mse", "brisque", "niqe"]
     },
     {
         "film": "Wiegman film of John F. Kennedy assassination",
         "start": "0:05",
         "end":   "0:15",
-        "enhancements": ["sharpen", "stabilize"]
+        "enhancements": ["sharpen", "stabilize"], 
+        "metrics": ["psnr", "ssim", "mse", "brisque", "niqe"]
     },
     {
         "film": "Couch film of John F. Kennedy assassination",
         "start": "0:00",
         "end":   "0:10",
-        "enhancements": ["denoise", "sharpen", "stabilize"]
+        "enhancements": ["denoise", "sharpen", "stabilize"], 
+        "metrics": ["psnr", "ssim", "mse", "brisque", "niqe"]
     },
 ]

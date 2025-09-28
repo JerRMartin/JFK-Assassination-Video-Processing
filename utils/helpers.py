@@ -1,7 +1,7 @@
 from pathlib import Path
 import re
 
-def _to_seconds(tc: str | None) -> float | None:
+def to_seconds(tc: str | None) -> float | None:
     """Parse 'mm:ss' or 'hh:mm:ss' → seconds."""
     if not tc or not tc.strip():
         return None
@@ -15,7 +15,7 @@ def _to_seconds(tc: str | None) -> float | None:
         return hh * 3600 + mm * 60 + ss
     raise ValueError(f"Bad timecode '{tc}'. Use mm:ss or hh:mm:ss")
 
-def _match_file(videos: list[Path], query: str) -> Path | None:
+def match_file(videos: list[Path], query: str) -> Path | None:
     """Case-insensitive substring match of 'film' against file stem."""
     q = re.sub(r"\s+", " ", query.strip().lower())
     for p in videos:
@@ -26,6 +26,3 @@ def _match_file(videos: list[Path], query: str) -> Path | None:
 
 def discover_videos(folder: Path):
     return sorted([f for f in folder.glob("*") if f.suffix.lower() in [".mp4", ".avi", ".mov", ".mkv"]])
-
-def timestamp_to_seconds():
-    pass
