@@ -1,1 +1,1 @@
-# keeps utils as a proper package
+"""Utilities package for video processing helpers."""

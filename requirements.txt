@@ -3,3 +3,4 @@ numpy==2.2.6
 scipy==1.16.2
 Pillow==11.3.0
 sewar==0.4.6
+vidstab==1.7.4

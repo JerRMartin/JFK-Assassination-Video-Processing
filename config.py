@@ -2,13 +2,16 @@ from pathlib import Path
 import numpy as np
 import shutil
 import cv2
+from vidstab import VidStab
 
 # Folders
 VIDEO_FOLDER = Path("videos")
-OUTPUT_DIR = Path("processed_videos")
+PROCESSED_DIR = Path("processed_videos")
+STABILIZED_DIR = Path("stabilized_videos")
 
 # Stabilization
 SMOOTHING_RADIUS = 30  # higher = smoother but more crop/edge wobble
+STABILIZER = VidStab()
 
 # Denoising (OpenCV fastNlMeansDenoisingColored)
 DENOISE_H = 10           # luminance
@@ -18,9 +21,9 @@ DENOISE_SEARCH = 21
 
 # Sharpen kernel (mild, avoids halos)
 SHARPEN_KERNEL = np.array(
-    [[0, -0.5, 0],
-     [-0.5, 3.0, -0.5],
-     [0, -0.5, 0]], dtype=np.float32
+    [[0, -1, 0],
+     [-1, 5, -1],
+     [0, -1, 0]], dtype=np.float32
 )
 
 # I/O & codec
@@ -37,15 +40,13 @@ INSTRUCTIONS = [
         "film": "Hughes film of John F. Kennedy assassination",
         "start": "0:06",
         "end":   "0:27",
-        #"enhancements": ["denoise", "sharpen"]
-        "enhancements": ["sharpen"]
+        "enhancements": ["denoise", "sharpen", "stabilize"]
     },
     {
         "film": "Martin film of John F. Kennedy assassination",
         "start": "0:07",
         "end":   "0:12",
-        #"enhancements": ["denoise", "sharpen"]
-        "enhancements": ["sharpen"]
+        "enhancements": ["denoise", "sharpen", "stabilize"]
     },
     {
         "film": "JFK Assassination Bell Film",
@@ -57,13 +58,12 @@ INSTRUCTIONS = [
         "film": "Wiegman film of John F. Kennedy assassination",
         "start": "0:05",
         "end":   "0:15",
-        "enhancements": ["stabilize"]
+        "enhancements": ["sharpen", "stabilize"]
     },
     {
         "film": "Couch film of John F. Kennedy assassination",
         "start": "0:00",
         "end":   "0:10",
-        #"enhancements": ["denoise", "sharpen"]
-        "enhancements": ["sharpen"]
+        "enhancements": ["denoise", "sharpen", "stabilize"]
     },
 ]

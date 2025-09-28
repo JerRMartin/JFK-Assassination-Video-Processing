@@ -1,5 +1,6 @@
 import numpy as np
 import cv2
+from vidstab import VidStab
 
 def moving_average(curve, radius: int):
     """1D moving average with reflect padding."""
