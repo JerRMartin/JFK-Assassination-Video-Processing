@@ -8,6 +8,7 @@ from vidstab import VidStab
 VIDEO_FOLDER = Path("videos")
 PROCESSED_DIR = Path("processed_videos")
 STABILIZED_DIR = Path("stabilized_videos")
+FRAMES_DIR = Path("frames")  # for visual assessment
 
 # Stabilization
 SMOOTHING_RADIUS = 30  # higher = smoother but more crop/edge wobble

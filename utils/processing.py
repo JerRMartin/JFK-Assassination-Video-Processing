@@ -1,6 +1,7 @@
 # utils/processing.py
 from pathlib import Path
 import cv2
+import random
 
 import config as C
 
@@ -61,6 +62,10 @@ def process_clip(input_path: Path, output_path: Path,
     total_segment_frames = (end_frame - start_frame) + 1
     for n in range(1, total_segment_frames):
         ret, frame = cap.read()
+        if n == total_segment_frames // 2:
+            frame_path = C.FRAMES_DIR / f"PRE_{input_path.stem}_frame.jpg"
+            cv2.imwrite(str(frame_path), frame)
+            print(f"    📷 Saved frame to {frame_path}")
         if not ret:
             break
         frame = _apply_effects(frame, do_denoise, do_sharpen)

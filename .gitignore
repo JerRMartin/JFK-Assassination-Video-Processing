@@ -2,3 +2,4 @@ virtual_env
 utils/__pycache__/*
 processed_videos/*
 stabilized_videos/*
+frames/*

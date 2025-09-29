@@ -1,7 +1,8 @@
 import config as C
+import cv2
 from utils.processing import process_clip
 from utils.audio import merge_audio_window
-from utils.helpers import to_seconds, match_file, discover_videos
+from utils.helpers import to_seconds, match_file, discover_videos, get_midpoint_frame
 from utils.metrics import compute_video_metrics
 
 
@@ -19,6 +20,7 @@ def main():
     # Ensure output folders exist
     C.PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
     C.STABILIZED_DIR.mkdir(parents=True, exist_ok=True)
+    C.FRAMES_DIR.mkdir(parents=True, exist_ok=True)
 
     for job in jobs:
         film = job["film"]
@@ -66,6 +68,11 @@ def main():
                                    border_size=100)
             print(f"✅ Stabilization done. Check the '{C.STABILIZED_DIR}' folder for {stab_out_path.name}.")
 
+        # Get POST frame for visual assessment
+        frame_path = C.FRAMES_DIR / f"POST_{out_path.stem}_frame.jpg"
+        cv2.imwrite(str(frame_path), get_midpoint_frame(out_path))
+        print(f"    📷 Saved frame to {frame_path}")
+
         # Only compute metrics if requested in the job's metrics list
         metrics_req = [m.lower() for m in job.get("metrics", [])]
         if any(m in metrics_req for m in ("ssim", "mse")):
@@ -73,11 +80,11 @@ def main():
             res = compute_video_metrics(
                 ref_path=str(out_path),
                 test_path=str(stab_out_path),
-                crop_border=20,      # ignore 20px border to avoid black edges
+                crop_border=100,      # ignore 100px border to avoid black edges
                 max_frames=None      # or set e.g. 300 for speed
             )
             print(f"📊 Metrics on stabilized window "
-                  f"(frames={res['frames']}, crop=20px): "
+                  f"(frames={res['frames']}, crop=100px): "
                   f"SSIM={res['ssim']:.4f}, MSE={res['mse']:.2f}")
 
     print(f"✅ Done. Check the '{C.PROCESSED_DIR}' folder.")
